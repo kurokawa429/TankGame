@@ -13,4 +13,32 @@ public class Tank {
 
     //坦克纵坐标
     private int y;
+
+    //坦克的方向
+    private int direct;
+
+    //坦克的速度
+    private int speed = 1;
+
+    //上下左右移动方法
+    public void moveUp(){
+        y -= speed;
+    }
+
+    public void moveRight(){
+        x += speed;
+    }
+
+    public void moveDown(){
+        y += speed;
+    }
+
+    public void moveLeft(){
+        x -= speed;
+    }
+
+    public Tank(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
 }
