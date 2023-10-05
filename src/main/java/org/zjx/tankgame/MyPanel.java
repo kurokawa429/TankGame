@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Vector;
 
 /**
  * 坦克大战的绘图区域
@@ -12,6 +13,25 @@ public class MyPanel extends JPanel implements KeyListener {
     //定义我的坦克
     Hero hero = null;
 
+    //定义敌人坦克
+    Vector<EnemyTank> enemyTanks = new Vector<>();
+
+    int enemyTankSize = 3;
+
+    public MyPanel() {
+        //初始化自己坦克
+        hero = new Hero(100, 100);
+        hero.setSpeed(10);
+        //初始化敌人坦克
+        for (int i = 0; i < enemyTankSize; i++) {
+            EnemyTank enemyTank = new EnemyTank((100 * (i + 1)), 0);
+            enemyTank.setDirect(2);
+            enemyTanks.add(enemyTank);
+        }
+
+    }
+
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -19,15 +39,16 @@ public class MyPanel extends JPanel implements KeyListener {
 
         //画出坦克，封装方法
         //自己坦克
-        drawTank(hero.getX(), hero.getY(), g, hero.getDirect(), 0);
-        //敌人坦克
-//        drawTank(hero.getX() + 60, hero.getY(), g, 3, 1);
+        drawTank(hero.getX(), hero.getY(), g, hero.getDirect(), 1);
+        //敌人坦克,遍历Vector
+        for (int i = 0; i < enemyTankSize; i++) {
+            //取出坦克
+            EnemyTank enemyTank = enemyTanks.get(i);
+            drawTank(enemyTank.getX(), enemyTank.getY(), g , enemyTank.getDirect(), 0);
+        }
     }
 
-    public MyPanel() {
-        hero = new Hero(100, 100);
-        hero.setSpeed(10);
-    }
+
 
 
     /**
