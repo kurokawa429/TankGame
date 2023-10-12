@@ -9,7 +9,7 @@ import java.util.Vector;
 /**
  * 坦克大战的绘图区域
  */
-public class MyPanel extends JPanel implements KeyListener {
+public class MyPanel extends JPanel implements KeyListener ,Runnable{
     //定义我的坦克
     Hero hero = null;
 
@@ -40,6 +40,13 @@ public class MyPanel extends JPanel implements KeyListener {
         //画出坦克，封装方法
         //自己坦克
         drawTank(hero.getX(), hero.getY(), g, hero.getDirect(), 1);
+
+        //画出hero发出的子弹
+        if(hero.shot != null && hero.shot.isLive){
+            g.fill3DRect(hero.shot.x, hero.shot.y, 3, 3, false);
+        }
+
+
         //敌人坦克,遍历Vector
         for (int i = 0; i < enemyTankSize; i++) {
             //取出坦克
@@ -132,6 +139,11 @@ public class MyPanel extends JPanel implements KeyListener {
             hero.setDirect(3);
             hero.moveLeft();
         }
+        //如果按下J,就发射子弹
+        if(e.getKeyCode() == KeyEvent.VK_J){
+            hero.shotEnemyTank();
+        }
+
 
         //面板重绘
         this.repaint();
@@ -139,6 +151,20 @@ public class MyPanel extends JPanel implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    public void run() {
+
+        while (true) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            this.repaint();
+        }
 
     }
 }
