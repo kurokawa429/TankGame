@@ -1,11 +1,13 @@
 package org.zjx.tankgame;
 
+import java.util.Vector;
+
 /**
  * 自己的坦克
  */
 public class Hero extends Tank {
     Shot shot = null;
-
+    Vector<Shot> shots = new Vector<>();
     public Hero(int x, int y) {
         super(x, y);
     }
@@ -25,6 +27,7 @@ public class Hero extends Tank {
                 shot = new Shot(getX(), getY() + 20, 3);
                 break;
         }
+        shots.add(shot);
         new Thread(shot).start();
     }
 }

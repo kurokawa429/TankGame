@@ -20,6 +20,8 @@ public class Tank {
     //坦克的速度
     private int speed = 1;
 
+    //坦克是否存活
+    boolean isLive = true;
     //上下左右移动方法
     public void moveUp(){
         y -= speed;
