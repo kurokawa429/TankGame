@@ -15,6 +15,8 @@ public class MyPanel extends JPanel implements KeyListener ,Runnable{
 
     //定义敌人坦克
     Vector<EnemyTank> enemyTanks = new Vector<>();
+
+    Vector<Node> nodes = new Vector<>();
     //定义Vector，存放Bomb
     Vector<Bomb> bombs = new Vector<>();
     int enemyTankSize = 3;
@@ -23,21 +25,46 @@ public class MyPanel extends JPanel implements KeyListener ,Runnable{
     Image image2 = null;
     Image image3 = null;
 
-    public MyPanel() {
+    public MyPanel(String key) {
+
+        Recorder.setEnemyTanks(enemyTanks);
         //初始化自己坦克
-        hero = new Hero(100, 100);
+        hero = new Hero(100, 500);
         hero.setSpeed(10);
-        //初始化敌人坦克
-        for (int i = 0; i < enemyTankSize; i++) {
-            EnemyTank enemyTank = new EnemyTank((100 * (i + 1)), 0);
-            enemyTank.setDirect(2);
-            //启动敌人坦克线程
-            new Thread(enemyTank).start();
-            //给敌人坦克加一颗子弹
-            Shot shot = new Shot(enemyTank.getX() + 20, enemyTank.getY() + 60, enemyTank.getDirect());
-            enemyTank.shots.add(shot);
-            new Thread(shot).start();
-            enemyTanks.add(enemyTank);
+
+        switch (key){
+            case "1":
+                for (int i = 0; i < enemyTankSize; i++) {
+                    EnemyTank enemyTank = new EnemyTank((100 * (i + 1)), 0);
+                    enemyTank.setEnemyTanks(enemyTanks);
+                    enemyTank.setDirect(2);
+                    //启动敌人坦克线程
+                    new Thread(enemyTank).start();
+                    //给敌人坦克加一颗子弹
+                    Shot shot = new Shot(enemyTank.getX() + 20, enemyTank.getY() + 60, enemyTank.getDirect());
+                    enemyTank.shots.add(shot);
+                    new Thread(shot).start();
+                    enemyTanks.add(enemyTank);
+                }
+                break;
+            case "2":
+                nodes = Recorder.getNodesAndEnemyTankRec();
+                for (int i = 0; i < nodes.size(); i++) {
+                    Node node = nodes.get(i);
+                    EnemyTank enemyTank = new EnemyTank(node.getX(), node.getY());
+                    enemyTank.setEnemyTanks(enemyTanks);
+                    enemyTank.setDirect(node.getDirect());
+                    //启动敌人坦克线程
+                    new Thread(enemyTank).start();
+                    //给敌人坦克加一颗子弹
+                    Shot shot = new Shot(enemyTank.getX() + 20, enemyTank.getY() + 60, enemyTank.getDirect());
+                    enemyTank.shots.add(shot);
+                    new Thread(shot).start();
+                    enemyTanks.add(enemyTank);
+                }
+                break;
+            default:
+                System.out.println("输入有误");
         }
         //初始化图片对象
         image1 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_1.PNG"));
@@ -45,12 +72,22 @@ public class MyPanel extends JPanel implements KeyListener ,Runnable{
         image3 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_3.PNG"));
     }
 
+    public void showInfo(Graphics g){
+        g.setColor(Color.BLACK);
+        Font font = new Font("宋体", Font.BOLD, 25);
+        g.setFont(font);
+        g.drawString("您累计击毁敌方坦克", 1020, 30);
+        drawTank(1020, 60, g, 0, 0);
+        g.setColor(Color.BLACK);
+        g.drawString(Recorder.getAllEnemyTankNum() + "", 1080, 100);
+    }
+
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         g.fillRect(0, 0, 1000, 750);
-
+        showInfo(g);
         //画出坦克，封装方法
         //自己坦克
 
@@ -228,6 +265,10 @@ public class MyPanel extends JPanel implements KeyListener ,Runnable{
                     //当子弹击中坦克，从集合里移除
                     enemyTanks.remove(enemyTank);
                     enemyTankSize--;
+                    if(enemyTank instanceof EnemyTank){
+                        Recorder.addAllEnemyTankNum();
+                    }
+
                     //加入Bomb到bombs集合中
                     Bomb bomb = new Bomb(enemyTank.getX(), enemyTank.getY());
                     bombs.add(bomb);
@@ -241,6 +282,10 @@ public class MyPanel extends JPanel implements KeyListener ,Runnable{
                     //当子弹击中坦克，从集合里移除
                     enemyTanks.remove(enemyTank);
                     enemyTankSize--;
+
+                    if(enemyTank instanceof EnemyTank){
+                        Recorder.addAllEnemyTankNum();
+                    }
                     //加入Bomb到bombs集合中
                     Bomb bomb = new Bomb(enemyTank.getX(), enemyTank.getY());
                     bombs.add(bomb);
